@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Alunos</title>
+</head>
+<body>
+
+    {% if ativos %}
+         <h1>Lista de Alunos</h1>
+    {% else %}
+        <h1>Lista de Alunos Inativos</h1>
+    {% endif %}
+    
+
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>
+            {{ message }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <table border="1" cellpadding="5" cellspacing="1">
+        <tr>
+            <th>Nome</th>
+            <th>Curso</th>
+            <th>Gênero</th>
+            <th>Escolaridade</th>
+            <th>Estado Civil</th>
+            <th>Nascimento</th>
+            <th>Editar</th>
+        </tr>
+        {% for aluno in alunos %}
+        <tr>
+            <td>{{ aluno.nome|title }}</td>
+            <td>{{ aluno.curso|title }}</td>
+            <td>{{ aluno.get_genero_display }}</td>
+            <td>{{ aluno.get_escolaridade_display }}</td>
+            <td>{{ aluno.get_estado_civil_display }}</td>
+            <td>{{ aluno.data_nascimento|date:"d/m/Y" }}</td>
+            <td>
+                {% if ativos %}
+                    <a href="{% url 'editar_aluno' aluno.id %}">Editar</a>
+                    <a href="{% url 'excluir_aluno' aluno.id %}">Excluir</a>
+                {% else %}
+                    <a href="{% url 'ativar_aluno' aluno.id %}">Ativar</a>
+                {% endif %}
+            </td>
+        
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p><a href="{% url 'index' %}">Voltar para Menu</a></p>
+
+    {% if ativos %}
+        <p><a href="{% url 'alunos_inativos' %}">Mostrar Inativos</a></p>
+    {% else %}
+        <p><a href="{% url 'alunos' %}">Mostrar Ativos</a></p>
+    {% endif %}
+
+</body>
+</html>

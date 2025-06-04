@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Aluno</title>
+</head>
+<body>
+    
+    <h1>Cadastro de Aluno</h1>
+
+    <form method="post" action="{% url 'cadastrar_aluno' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <button type="submit">Cadastrar Aluno</button>
+    </form>
+
+    <p><a href="{% url 'index' %}">Voltar para Menu</a></p>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+</body>
+</html>

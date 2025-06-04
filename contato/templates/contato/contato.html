@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato</title>
+</head>
+<body>
+    <h1>Bem-vindo à página de contato</h1>
+
+    {% if mensagem_enviada %}
+        {{ mensagem }}
+    {% endif %}
+
+    
+    <form method="post"> 
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Enviar</button>
+        <button type="reset">Limpar</button>
+
+    </form>
+
+    <p><a href="{% url 'index' %}">Voltar para Menu</a></p>
+
+</body>
+</html>

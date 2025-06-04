@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index de Acadêmico</title>
+</head>
+<body>
+    <h1>Index de Acadêmico</h1>
+
+    <ul>
+        <p>Escolha uma opção:</p>
+        <li><a href=" {% url 'cadastrar_aluno' %}">Cadastro de Aluno</a></li>
+        <li><a href=" {% url 'cadastrar_curso' %}">Cadastro de Curso</a></li>
+        <li><a href=" {% url 'alunos' %}">Lista de Alunos</a></li>
+        <li><a href=" {% url 'cursos' %}">Lista de Cursos</a></li>
+        <li><a href=" {% url 'contato' %}">Contato</a></li>
+    </ul>
+
+    </body>
+</html>
+

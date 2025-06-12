@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Aluno</title>
+    <title>Edição de Livro</title>
 </head>
 <body>
     
-    <h1>Cadastro de Aluno</h1>
+    <h1>Editar Livro</h1>
 
-    <form method="post" action="{% url 'cadastrar_aluno' %}">
+    <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        
-        <button type="submit">Cadastrar Aluno</button>
+
+        <button type="submit">Salvar Alterações</button>
+
     </form>
 
     <p><a href="{% url 'index' %}">Voltar para Menu</a></p>
 
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
+    
 
 </body>
 </html>

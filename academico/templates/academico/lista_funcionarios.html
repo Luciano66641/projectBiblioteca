@@ -1,0 +1,57 @@
+{% extends 'academico/base.html' %}
+
+{% block content %}
+
+{% if ativos %}
+<h1>Gerenciar Funcionários</h1>
+{% else %}
+<h1>Gerenciar Funcionários Inativos</h1>
+{% endif %}
+
+<p>
+<form method="get">
+    <input type="text" name="busca" placeholder="Buscar por nome" value="{{ query|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+</p>
+
+<table class="table table-bordered table-striped table-hover mt-4">
+    <tr>
+        {% if ativos %}
+        <th><a href="{% url 'ordenar_funcionarios' 'nome' %}?busca={{ query }}">Nome</a></th>
+        <th><a href="{% url 'ordenar_funcionarios' 'genero' %}?busca={{ query }}">Gênero</a></th>
+        <th><a href="{% url 'ordenar_funcionarios' 'escolaridade' %}?busca={{ query }}">Escolaridade</a></th>
+        <th><a href="{% url 'ordenar_funcionarios' 'estado_civil' %}?busca={{ query }}">Estado Civil</a></th>
+        <th><a href="{% url 'ordenar_funcionarios' 'data_nascimento' %}?busca={{ query }}">Nascimento</a></th>
+        <th>Ações</th>
+        {% else %}
+        <th><a href="{% url 'ordenar_funcionarios_inativos' 'nome' %}?busca={{ query }}">Nome</a></th>
+        <th><a href="{% url 'ordenar_funcionarios_inativos' 'genero' %}?busca={{ query }}">Gênero</a></th>
+        <th><a href="{% url 'ordenar_funcionarios_inativos' 'escolaridade' %}?busca={{ query }}">Escolaridade</a></th>
+        <th><a href="{% url 'ordenar_funcionarios_inativos' 'estado_civil' %}?busca={{ query }}">Estado Civil</a></th>
+        <th><a href="{% url 'ordenar_funcionarios_inativos' 'data_nascimento' %}?busca={{ query }}">Nascimento</a></th>
+        <th>Ativar</th>
+        {% endif %}
+    </tr>
+
+    {% for funcionario in funcionarios %}
+    <tr>
+        <td>{{ funcionario.nome }}</td>
+        <td>{{ funcionario.get_genero_display }}</td>
+        <td>{{ funcionario.get_escolaridade_display }}</td>
+        <td>{{ funcionario.get_estado_civil_display }}</td>
+        <td>{{ funcionario.data_nascimento|date:"d/m/Y" }}</td>
+        <td>
+            {% if ativos %}
+            <a href="{% url 'editar_funcionario' funcionario.id %}">Editar</a>
+            <a href="{% url 'excluir_funcionario' funcionario.id %}">Excluir</a>
+            {% else %}
+            <a href="{% url 'ativar_funcionario' funcionario.id %}">Ativar</a>
+            {% endif %}
+        </td>
+
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

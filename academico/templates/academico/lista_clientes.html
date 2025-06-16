@@ -1,55 +1,82 @@
 {% extends 'academico/base.html' %}
-
 {% block content %}
 
-{% if ativos %}
-<h1>Gerenciar Clientes</h1>
-{% else %}
-<h1>Gerenciar Clientes Inativos</h1>
-{% endif %}
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
 
-<p>
-<form method="get">
-    <input type="text" name="busca" placeholder="Buscar por nome" value="{{ query|default:'' }}">
-    <button type="submit">Buscar</button>
-</form>
-</p>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                {% if ativos %}
+                    <h2 class="mb-0">Gerenciar Clientes</h2>
+                {% else %}
+                    <h2 class="mb-0">Gerenciar Clientes Inativos</h2>
+                {% endif %}
 
-<table class="table table-bordered table-striped table-hover mt-4">
-    <tr>
-        {% if ativos %}
-        <th><a href="{% url 'ordenar_clientes' 'nome' %}?busca={{ query }}">Nome</a></th>
-        <th><a href="{% url 'ordenar_clientes' 'cpf' %}?busca={{ query }}">CPF</a></th>
-        <th><a href="{% url 'ordenar_clientes' 'telefone' %}?busca={{ query }}">Telefone</a></th>
-        <th><a href="{% url 'ordenar_clientes' 'endereco' %}?busca={{ query }}">Endereço</a></th>
-        <th><a href="{% url 'ordenar_clientes' 'livro' %}?busca={{ query }}">Livro</a></th>
-        {% else %}
-        <th><a href="{% url 'ordenar_clientes_inativos' 'nome' %}?busca={{ query }}">Nome</a></th>
-        <th><a href="{% url 'ordenar_clientes_inativos' 'cpf' %}?busca={{ query }}">CPF</a></th>
-        <th><a href="{% url 'ordenar_clientes_inativos' 'telefone' %}?busca={{ query }}">Telefone</a></th>
-        <th><a href="{% url 'ordenar_clientes_inativos' 'endereco' %}?busca={{ query }}">Endereço</a></th>
-        <th><a href="{% url 'ordenar_clientes_inativos' 'livro' %}?busca={{ query }}">Livro</a></th>
-        {% endif %}
-        <th>Ações</th>
-    </tr>
+                <a href="{% url 'cadastrar_cliente' %}" class="btn btn-success">Cadastrar Novo Cliente</a>
+            </div>
 
-    {% for cliente in clientes %}
-    <tr>
-        <td>{{ cliente.nome }}</td>
-        <td>{{ cliente.cpf }}</td>
-        <td>{{ cliente.telefone }}</td>
-        <td>{{ cliente.endereco }}</td>
-        <td>{{ cliente.livro.titulo }}</td>
-        <td>
-            {% if ativos %}
-            <a href="{% url 'editar_cliente' cliente.id %}">Editar</a>
-            <a href="{% url 'excluir_cliente' cliente.id %}">Excluir</a>
-            {% else %}
-            <a href="{% url 'ativar_cliente' cliente.id %}">Ativar</a>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+            <form method="get" class="row g-3 align-items-center mb-4">
+                <div class="col-auto">
+                    <input type="text" name="busca" class="form-control" placeholder="Buscar por nome" value="{{ query|default:'' }}">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-outline-primary">Buscar</button>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            {% if ativos %}
+                                <th><a href="{% url 'ordenar_clientes' 'nome' %}?busca={{ query }}">Nome</a></th>
+                                <th><a href="{% url 'ordenar_clientes' 'cpf' %}?busca={{ query }}">CPF</a></th>
+                                <th><a href="{% url 'ordenar_clientes' 'telefone' %}?busca={{ query }}">Telefone</a></th>
+                                <th><a href="{% url 'ordenar_clientes' 'endereco' %}?busca={{ query }}">Endereço</a></th>
+                                <th><a href="{% url 'ordenar_clientes' 'livro' %}?busca={{ query }}">Livro</a></th>
+                            {% else %}
+                                <th><a href="{% url 'ordenar_clientes_inativos' 'nome' %}?busca={{ query }}">Nome</a></th>
+                                <th><a href="{% url 'ordenar_clientes_inativos' 'cpf' %}?busca={{ query }}">CPF</a></th>
+                                <th><a href="{% url 'ordenar_clientes_inativos' 'telefone' %}?busca={{ query }}">Telefone</a></th>
+                                <th><a href="{% url 'ordenar_clientes_inativos' 'endereco' %}?busca={{ query }}">Endereço</a></th>
+                                <th><a href="{% url 'ordenar_clientes_inativos' 'livro' %}?busca={{ query }}">Livro</a></th>
+                            {% endif %}
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cliente in clientes %}
+                            <tr>
+                                <td>{{ cliente.nome }}</td>
+                                <td>{{ cliente.cpf }}</td>
+                                <td>{{ cliente.telefone }}</td>
+                                <td>{{ cliente.endereco }}</td>
+                                <td>{{ cliente.livro.titulo }}</td>
+                                <td>
+                                    {% if ativos %}
+                                        <a href="{% url 'visualizar_cliente' cliente.id %}" class="btn btn-sm btn-secondary">Ver</a>
+                                        <a href="{% url 'editar_cliente' cliente.id %}" class="btn btn-sm btn-primary">Editar</a>
+                                        <a href="{% url 'excluir_cliente' cliente.id %}" class="btn btn-sm btn-danger">Excluir</a>
+                                    {% else %}
+                                        <a href="{% url 'ativar_cliente' cliente.id %}" class="btn btn-sm btn-success">Ativar</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-muted">Nenhum cliente encontrado.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{% url 'index' %}" class="btn btn-link">Voltar para o Menu</a>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 {% endblock %}

@@ -23,4 +23,6 @@ urlpatterns = [
     path('clientes/ativar/<int:id>/', views.ativar_cliente, name='ativar_cliente'),
     path('clientes/ordenar/<campo>/', views.ordenar_clientes, name='ordenar_clientes'),
     path('clientes/ordenar/inativos/<campo>/', views.ordenar_clientes_inativos, name='ordenar_clientes_inativos'),
+    path('funcionarios/visualizar/<int:id>/', views.visualizar_funcionario, name='visualizar_funcionario'),
+    path('clientes/visualizar/<int:id>/', views.visualizar_cliente, name='visualizar_cliente'),
 ]

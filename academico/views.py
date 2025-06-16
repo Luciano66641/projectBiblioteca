@@ -4,7 +4,7 @@ from .forms import LivroForm, FuncionarioForm, ClienteForm
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.db.models import RestrictedError
-
+from django.shortcuts import get_object_or_404
 
 ORDENACAO_FUNCIONARIOS_LOOKUP = {
     'nome': 'nome',
@@ -335,4 +335,16 @@ def ordenar_clientes_inativos(request, campo):
         'clientes': clientes,
         'ativos': False,
         'query': busca
+    })
+
+def visualizar_funcionario(request, id):
+    funcionario = get_object_or_404(Funcionario, id=id)
+    return render(request, 'academico/visualizar_funcionario.html', {
+        'funcionario': funcionario
+    })
+
+def visualizar_cliente(request, id):
+    cliente = get_object_or_404(Cliente, id=id)
+    return render(request, 'academico/visualizar_cliente.html', {
+        'cliente': cliente
     })

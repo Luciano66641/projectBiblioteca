@@ -1,32 +1,55 @@
-from .models import Cliente
 from django import forms
-from .models import Livro, Funcionario
+from django.core.validators import RegexValidator
+from .models import Livro, Funcionario, Cliente
 
-# Formulário para Livro
-
+# Validador: apenas números
+somente_numeros = RegexValidator(r'^\d+$', 'Este campo deve conter apenas números.')
 
 class LivroForm(forms.ModelForm):
     class Meta:
-        model = Livro  # Aqui vamos dizer que o formulário vai usar o modelo Livro
-        # Aqui vamos dizer quais campos do modelo Livro queremos usar no formulário
+        model = Livro
         fields = '__all__'
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
+            'autor': forms.TextInput(attrs={'class': 'form-control'}),
+            'editora': forms.TextInput(attrs={'class': 'form-control'}),
+            'ano_publicacao': forms.NumberInput(attrs={'class': 'form-control'}),
+            'isbn': forms.TextInput(attrs={'class': 'form-control'}),
+            'genero': forms.Select(attrs={'class': 'form-control'}),
+            'quantidade_disponivel': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
 
-
-# Formulário para Funcionários
 class FuncionarioForm(forms.ModelForm):
+    cpf = forms.CharField(validators=[somente_numeros])
+    telefone = forms.CharField(validators=[somente_numeros])
     data_nascimento = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         input_formats=['%Y-%m-%d']
     )
 
     class Meta:
-        model = Funcionario  # Aqui vamos dizer qual modelo esse formulário vai usar
-        fields = ['nome', 'data_nascimento', 'cpf', 'genero',
-                  'estado_civil', 'escolaridade']
-        # Aqui vamos dizer quais campos do modelo funcionario queremos usar no formulário
-
+        model = Funcionario
+        fields = ['nome', 'data_nascimento', 'cpf', 'telefone', 'genero', 'estado_civil', 'escolaridade']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control'}),
+            'genero': forms.Select(attrs={'class': 'form-control'}),
+            'estado_civil': forms.Select(attrs={'class': 'form-control'}),
+            'escolaridade': forms.Select(attrs={'class': 'form-control'}),
+        }
 
 class ClienteForm(forms.ModelForm):
+    cpf = forms.CharField(validators=[somente_numeros])
+    telefone = forms.CharField(validators=[somente_numeros])
+
     class Meta:
         model = Cliente
         fields = ['nome', 'cpf', 'telefone', 'endereco', 'livro']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control'}),
+            'endereco': forms.TextInput(attrs={'class': 'form-control'}),
+            'livro': forms.Select(attrs={'class': 'form-control'}),
+        }

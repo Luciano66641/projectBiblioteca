@@ -1,85 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Biblioteca</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <title>Sistema Biblioteca</title>
 </head>
 
-<body>
+<body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Biblioteca</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand fw-bold" href="#">Biblioteca</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+                aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
+                        <a class="nav-link active" href="{% url 'index' %}">Home</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
                             Funcionário
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'cadastrar_funcionario'%}">Cadastrar Funcionário</a></li>
+                            <li><a class="dropdown-item" href="{% url 'cadastrar_funcionario' %}">Cadastrar Funcionário</a></li>
                             <li><a class="dropdown-item" href="{% url 'funcionarios' %}">Funcionários Ativos</a></li>
                             <li><a class="dropdown-item" href="{% url 'funcionarios_inativos' %}">Funcionários Inativos</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
                             Clientes
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'cadastrar_cliente'%}">Cadastrar Clientes</a></li>
+                            <li><a class="dropdown-item" href="{% url 'cadastrar_cliente' %}">Cadastrar Cliente</a></li>
                             <li><a class="dropdown-item" href="{% url 'clientes' %}">Clientes Ativos</a></li>
                             <li><a class="dropdown-item" href="{% url 'clientes_inativos' %}">Clientes Inativos</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
                             Livro
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'cadastrar_livro' %}">Cadastrar Livro</a></li>
-                            <li><a class="dropdown-item" href="{% url 'livros' %}">Gerenciar livros</a></li>
+                            <li><a class="dropdown-item" href="{% url 'livros' %}">Gerenciar Livros</a></li>
                         </ul>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="{% url 'contato' %}">Contato</a>
-                    </li> -->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link" href="{% url 'contato' %}">Contato</a>-->
+<!--                    </li>-->
                 </ul>
             </div>
         </div>
     </nav>
 
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>
-            {{ message }}
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+    <!-- Mensagens -->
+    <div class="container mt-3">
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for message in messages %}
+                    <div>{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 
-    {% block content %}
+    <!-- Conteúdo da página -->
+    {% block content %}{% endblock %}
 
-    {% endblock %}
-
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
 </body>
-
 </html>

@@ -34,5 +34,7 @@ urlpatterns = [
     path('emprestimos/ocorrencia/<int:emprestimo_id>/', views.registrar_ocorrencia, name='registrar_ocorrencia'),
     path('clientes/desbloquear/<int:id>/', views.desbloquear_cliente, name='desbloquear_cliente'),
     path('livros/ordenar/<str:campo>/', views.ordenar_livros, name='ordenar_livros'),
+    path('reservas/', views.listar_reservas, name='listar_reservas'),
+    path('reservas/cancelar/<int:reserva_id>/', views.cancelar_reserva, name='cancelar_reserva'),
 
 ]

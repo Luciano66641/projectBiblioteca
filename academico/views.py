@@ -544,3 +544,13 @@ def desbloquear_cliente(request, id):
     cliente.save()
     messages.success(request, f"Cliente {cliente.nome} foi desbloqueado.")
     return redirect('clientes')
+
+def listar_reservas(request):
+    reservas = Reserva.objects.all().order_by('-data_reserva')
+    return render(request, 'academico/lista_reservas.html', {'reservas': reservas})
+
+def cancelar_reserva(request, reserva_id):
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+    reserva.delete()
+    messages.success(request, "Reserva cancelada com sucesso.")
+    return redirect('listar_reservas')

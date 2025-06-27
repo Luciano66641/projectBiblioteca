@@ -1,0 +1,49 @@
+{% extends 'academico/base.html' %}
+{% block content %}
+
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Reservas de Livros</h2>
+    <table class="table table-bordered table-hover align-middle text-center">
+        <thead class="table-light">
+            <tr>
+                <th>Cliente</th>
+                <th>Livro</th>
+                <th>Data da Reserva</th>
+                <th>Notificado</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas %}
+                <tr>
+                    <td>{{ reserva.cliente.nome }}</td>
+                    <td>{{ reserva.livro.titulo }}</td>
+                    <td>{{ reserva.data_reserva|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if reserva.notificado %}
+                            <span class="badge bg-success">Sim</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Não</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'cancelar_reserva' reserva.id %}" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Tem certeza que deseja cancelar esta reserva?')">
+                            Cancelar
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-muted">Nenhuma reserva encontrada.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'index' %}" class="btn btn-link">Voltar para o Menu</a>
+    </div>
+</div>
+
+{% endblock %}

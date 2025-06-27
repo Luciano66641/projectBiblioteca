@@ -25,4 +25,14 @@ urlpatterns = [
     path('clientes/ordenar/inativos/<campo>/', views.ordenar_clientes_inativos, name='ordenar_clientes_inativos'),
     path('funcionarios/visualizar/<int:id>/', views.visualizar_funcionario, name='visualizar_funcionario'),
     path('clientes/visualizar/<int:id>/', views.visualizar_cliente, name='visualizar_cliente'),
+    path('emprestimos/novo/', views.realizar_emprestimo, name='realizar_emprestimo'),
+    path('emprestimos/', views.lista_emprestimos, name='lista_emprestimos'),
+    path('emprestimos/devolucao/<int:emprestimo_id>/', views.registrar_devolucao, name='registrar_devolucao'),
+    path('reservas/novo/', views.reservar_livro, name='reservar_livro'),
+    path('relatorios/', views.gerar_relatorio, name='gerar_relatorio'),
+    path('emprestimos/renovar/<int:emprestimo_id>/', views.renovar_emprestimo, name='renovar_emprestimo'),
+    path('emprestimos/ocorrencia/<int:emprestimo_id>/', views.registrar_ocorrencia, name='registrar_ocorrencia'),
+    path('clientes/desbloquear/<int:id>/', views.desbloquear_cliente, name='desbloquear_cliente'),
+    path('livros/ordenar/<str:campo>/', views.ordenar_livros, name='ordenar_livros'),
+
 ]

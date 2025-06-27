@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 GENERO_CHOICES_HUMAN = [
     ('M', 'Masculino'),
@@ -33,6 +34,11 @@ GENERO_CHOICES = [
     ('outro', 'Outro'),
 ]
 
+STATUS_OCORRENCIA = [
+    ('normal', 'Normal'),
+    ('perdido', 'Perdido'),
+    ('danificado', 'Danificado'),
+]
 
 class Livro(models.Model):
     titulo = models.CharField(max_length=200)
@@ -98,6 +104,7 @@ class Cliente(models.Model):
     livro = models.ForeignKey(
         Livro, on_delete=models.RESTRICT, related_name="clientes")
     ativo = models.BooleanField(default=True)
+    bloqueado = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nome
@@ -111,3 +118,23 @@ class Cliente(models.Model):
         partes = nome.lower().split()
         minusculas = ['da', 'de', 'do', 'das', 'dos', 'e']
         return ' '.join([p if p in minusculas else p.capitalize() for p in partes])
+    
+class Emprestimo(models.Model):
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    livro = models.ForeignKey(Livro, on_delete=models.CASCADE)
+    data_retirada = models.DateField(default=timezone.now)
+    data_devolucao_prevista = models.DateField()
+    devolvido = models.BooleanField(default=False)
+    status_ocorrencia = models.CharField(max_length=20, choices=STATUS_OCORRENCIA, default='normal')
+
+    def __str__(self):
+        return f"{self.cliente.nome} - {self.livro.titulo}"
+
+class Reserva(models.Model):
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    livro = models.ForeignKey(Livro, on_delete=models.CASCADE)
+    data_reserva = models.DateTimeField(default=timezone.now)
+    notificado = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Reserva de {self.livro.titulo} para {self.cliente.nome}"

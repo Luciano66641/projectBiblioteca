@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from .models import Funcionario, Livro, Cliente
-from .forms import LivroForm, FuncionarioForm, ClienteForm
+from .models import Funcionario, Livro, Cliente, Emprestimo, Reserva
+from .forms import LivroForm, FuncionarioForm, ClienteForm, EmprestimoForm, ReservaForm, FiltroRelatorioForm, RenovacaoForm, OcorrenciaForm
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.db.models import RestrictedError
+from django.db.models import RestrictedError, Count, Q
 from django.shortcuts import get_object_or_404
 
 ORDENACAO_FUNCIONARIOS_LOOKUP = {
@@ -22,7 +22,15 @@ ORDENACAO_CLIENTES_LOOKUP = {
     'livro': 'livro__titulo'
 }
 
-# Create your views here.
+ORDENACAO_LIVROS_LOOKUP = {
+    'titulo': 'titulo',
+    'autor': 'autor',
+    'editora': 'editora',
+    'ano': 'ano_publicacao',
+    'isbn': 'isbn',
+    'genero': 'genero',
+    'quantidade': 'quantidade_disponivel',
+}
 
 
 def index(request):
@@ -60,14 +68,54 @@ def funcionarios_inativos(request):
     return render(request, 'academico/lista_funcionarios.html', dados)
 
 
+# def livros(request):
+#     livros = Livro.objects.all()
+#     dados = {
+#         'livros': livros,
+#     }
+#     return render(request, 'academico/lista_livros.html', dados)
 def livros(request):
+    query = request.GET.get('busca', '')
     livros = Livro.objects.all()
+
+    if query:
+        livros = livros.filter(
+            Q(titulo__icontains=query) |
+            Q(autor__icontains=query) |
+            Q(editora__icontains=query) |
+            Q(ano_publicacao__icontains=query) |
+            Q(genero__icontains=query) |
+            Q(isbn__icontains=query)
+        )
+
     dados = {
         'livros': livros,
+        'query': query,
     }
     return render(request, 'academico/lista_livros.html', dados)
 
+def ordenar_livros(request, campo):
+    campo_ordenacao = ORDENACAO_LIVROS_LOOKUP.get(campo)
+    busca = request.GET.get('busca', '')
+    livros = Livro.objects.all()
 
+    if busca:
+        livros = livros.filter(
+            Q(titulo__icontains=busca) |
+            Q(autor__icontains=busca) |
+            Q(editora__icontains=busca) |
+            Q(genero__icontains=busca) |
+            Q(isbn__icontains=busca)
+        )
+
+    if campo_ordenacao:
+        livros = livros.order_by(campo_ordenacao)
+
+    return render(request, 'academico/lista_livros.html', {
+        'livros': livros,
+        'query': busca
+    })
+    
 def cadastrar_funcionario(request):
 
     if request.method == 'POST':
@@ -348,3 +396,151 @@ def visualizar_cliente(request, id):
     return render(request, 'academico/visualizar_cliente.html', {
         'cliente': cliente
     })
+    
+    
+def realizar_emprestimo(request):
+    if request.method == 'POST':
+        form = EmprestimoForm(request.POST)
+        if form.is_valid():
+            emprestimo = form.save(commit=False)
+
+            if emprestimo.cliente.bloqueado:
+                form.add_error('cliente', 'Este cliente está bloqueado e não pode realizar empréstimos.')
+            elif emprestimo.livro.quantidade_disponivel > 0:
+                emprestimo.livro.quantidade_disponivel -= 1
+                emprestimo.livro.save()
+                emprestimo.save()
+                messages.success(request, "Empréstimo registrado com sucesso!")
+                return redirect('livros')
+            else:
+                form.add_error('livro', 'Livro indisponível no momento.')
+    else:
+        form = EmprestimoForm()
+    return render(request, 'academico/realizar_emprestimo.html', {'form': form})
+
+def registrar_devolucao(request, emprestimo_id):
+    emprestimo = get_object_or_404(Emprestimo, id=emprestimo_id, devolvido=False)
+
+    emprestimo.devolvido = True
+    emprestimo.livro.quantidade_disponivel += 1
+    emprestimo.livro.save()
+    emprestimo.save()
+
+    # Verifica se há reservas pendentes para esse livro
+    reserva_pendente = Reserva.objects.filter(livro=emprestimo.livro, notificado=False).order_by('data_reserva').first()
+    if reserva_pendente:
+        reserva_pendente.notificado = True
+        reserva_pendente.save()
+        messages.success(request, f"Devolução registrada. Aviso: {reserva_pendente.cliente.nome} foi notificado sobre a reserva do livro '{emprestimo.livro.titulo}'.")
+    else:
+        messages.success(request, "Devolução registrada com sucesso.")
+
+    return redirect('lista_emprestimos')
+
+def lista_emprestimos(request):
+    emprestimos = Emprestimo.objects.filter(devolvido=False)
+    return render(request, 'academico/lista_emprestimos.html', {'emprestimos': emprestimos})
+
+def reservar_livro(request):
+    if request.method == 'POST':
+        form = ReservaForm(request.POST)
+        form.fields['livro'].queryset = Livro.objects.filter(quantidade_disponivel=0)
+        if form.is_valid():
+            reserva = form.save(commit=False)
+
+            if reserva.cliente.bloqueado:
+                form.add_error('cliente', 'Este cliente está bloqueado e não pode reservar livros.')
+            elif reserva.livro.quantidade_disponivel == 0:
+                reserva.save()
+                messages.success(request, "Reserva registrada com sucesso.")
+                return redirect('livros')
+            else:
+                form.add_error('livro', 'Este livro está disponível. Utilize o menu de empréstimo.')
+    else:
+        form = ReservaForm()
+        form.fields['livro'].queryset = Livro.objects.filter(quantidade_disponivel=0)
+    return render(request, 'academico/reservar_livro.html', {'form': form})
+
+
+def gerar_relatorio(request):
+    relatorio = []
+    form = FiltroRelatorioForm()
+
+    if request.method == 'POST':
+        form = FiltroRelatorioForm(request.POST)
+        if form.is_valid():
+            data_inicio = form.cleaned_data['data_inicio']
+            data_fim = form.cleaned_data['data_fim']
+            tipo = form.cleaned_data['tipo']
+
+            if tipo == 'livros':
+                relatorio = (
+                    Emprestimo.objects.filter(data_retirada__range=(data_inicio, data_fim))
+                    .values('livro__titulo')
+                    .annotate(total=Count('id'))
+                    .order_by('-total')
+                )
+            elif tipo == 'usuarios':
+                relatorio = (
+                    Emprestimo.objects.filter(data_retirada__range=(data_inicio, data_fim))
+                    .values('cliente__nome')
+                    .annotate(total=Count('id'))
+                    .order_by('-total')
+                )
+
+    return render(request, 'academico/relatorio.html', {
+        'form': form,
+        'relatorio': relatorio
+    })
+    
+    
+def renovar_emprestimo(request, emprestimo_id):
+    emprestimo = get_object_or_404(Emprestimo, id=emprestimo_id, devolvido=False)
+    reservas = Reserva.objects.filter(livro=emprestimo.livro, notificado=False).exclude(cliente=emprestimo.cliente)
+
+    if reservas.exists():
+        messages.error(request, "Este livro está reservado para outro cliente e não pode ser renovado.")
+        return redirect('lista_emprestimos')
+
+    if request.method == 'POST':
+        form = RenovacaoForm(request.POST, instance=emprestimo)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Prazo de devolução renovado com sucesso.")
+            return redirect('lista_emprestimos')
+    else:
+        form = RenovacaoForm(instance=emprestimo)
+
+    return render(request, 'academico/renovar_emprestimo.html', {'form': form, 'emprestimo': emprestimo})
+
+
+def registrar_ocorrencia(request, emprestimo_id):
+    emprestimo = get_object_or_404(Emprestimo, id=emprestimo_id, devolvido=False)
+
+    if request.method == 'POST':
+        form = OcorrenciaForm(request.POST, instance=emprestimo)
+        if form.is_valid():
+            form.save()
+
+            # Bloqueia o cliente se marcar como perdido ou danificado
+            if emprestimo.status_ocorrencia in ['perdido', 'danificado']:
+                emprestimo.cliente.bloqueado = True
+                emprestimo.cliente.save()
+                messages.warning(request, f"O cliente {emprestimo.cliente.nome} foi bloqueado devido à ocorrência registrada.")
+
+            else:
+                messages.success(request, "Ocorrência registrada com sucesso.")
+
+            return redirect('lista_emprestimos')
+    else:
+        form = OcorrenciaForm(instance=emprestimo)
+
+    return render(request, 'academico/registrar_ocorrencia.html', {'form': form, 'emprestimo': emprestimo})
+
+
+def desbloquear_cliente(request, id):
+    cliente = get_object_or_404(Cliente, id=id)
+    cliente.bloqueado = False
+    cliente.save()
+    messages.success(request, f"Cliente {cliente.nome} foi desbloqueado.")
+    return redirect('clientes')

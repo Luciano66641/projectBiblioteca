@@ -8,26 +8,26 @@
                 <h2 class="mb-0">Gerenciar Livros</h2>
                 <a href="{% url 'cadastrar_livro' %}" class="btn btn-success">Cadastrar Novo Livro</a>
             </div>
-
-            {% if messages %}
-                <div class="alert alert-info">
-                    {% for message in messages %}
-                        <div>{{ message }}</div>
-                    {% endfor %}
+            <form method="get" class="row g-3 align-items-center mb-4">
+                <div class="col-md-4">
+                    <input type="text" name="busca" class="form-control"
+                        placeholder="Buscar por título, autor, gênero ou ISBN" value="{{ query|default:'' }}">
                 </div>
-            {% endif %}
-
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-outline-primary">Buscar</button>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover align-middle text-center">
                     <thead class="table-light">
                         <tr>
-                            <th>Título</th>
-                            <th>Autor</th>
-                            <th>Editora</th>
-                            <th>Ano</th>
-                            <th>ISBN</th>
-                            <th>Gênero</th>
-                            <th>Qtd. Disponível</th>
+                            <th><a href="{% url 'ordenar_livros' 'titulo' %}?busca={{ query }}">Título</a></th>
+                            <th><a href="{% url 'ordenar_livros' 'autor' %}?busca={{ query }}">Autor</a></th>
+                            <th><a href="{% url 'ordenar_livros' 'editora' %}?busca={{ query }}">Editora</a></th>
+                            <th><a href="{% url 'ordenar_livros' 'ano' %}?busca={{ query }}">Ano</a></th>
+                            <th><a href="{% url 'ordenar_livros' 'isbn' %}?busca={{ query }}">ISBN</a></th>
+                            <th><a href="{% url 'ordenar_livros' 'genero' %}?busca={{ query }}">Gênero</a></th>
+                            <th><a href="{% url 'ordenar_livros' 'quantidade' %}?busca={{ query }}">Qtd. Disp.</a></th>
                             <th>Ações</th>
                         </tr>
                     </thead>

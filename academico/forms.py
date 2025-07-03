@@ -1,4 +1,5 @@
 from django import forms
+
 from django.core.validators import RegexValidator
 from .models import Livro, Funcionario, Cliente, Emprestimo, Reserva
 
@@ -101,3 +102,5 @@ class OcorrenciaForm(forms.ModelForm):
         widgets = {
             'status_ocorrencia': forms.Select(attrs={'class': 'form-control'})
         }
+
+

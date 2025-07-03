@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from stdimage.models import StdImageField
+
 
 GENERO_CHOICES_HUMAN = [
     ('M', 'Masculino'),
@@ -48,6 +50,13 @@ class Livro(models.Model):
     isbn = models.CharField(max_length=20, unique=True)
     genero = models.CharField(max_length=20, choices=GENERO_CHOICES)
     quantidade_disponivel = models.PositiveIntegerField(default=1)
+    foto = StdImageField(
+        upload_to='fotos/alunos',
+        variations={'thumb': (150, 150), 'medium': (300, 300)},
+        blank=True,
+        null=True
+    )
+
 
     def __str__(self):
         return f"{self.titulo} ({self.ano_publicacao})"

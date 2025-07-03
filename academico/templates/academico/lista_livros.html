@@ -21,6 +21,7 @@
                 <table class="table table-bordered table-hover align-middle text-center">
                     <thead class="table-light">
                         <tr>
+                            <td>Capa</td>
                             <th><a href="{% url 'ordenar_livros' 'titulo' %}?busca={{ query }}">Título</a></th>
                             <th><a href="{% url 'ordenar_livros' 'autor' %}?busca={{ query }}">Autor</a></th>
                             <th><a href="{% url 'ordenar_livros' 'editora' %}?busca={{ query }}">Editora</a></th>
@@ -34,6 +35,7 @@
                     <tbody>
                         {% for livro in livros %}
                         <tr>
+                            <td><img src="{{ livro.foto.thumb.url }}" class="card-img-top" alt="Foto de {{ livro.nome }}"></td>
                             <td>{{ livro.titulo }}</td>
                             <td>{{ livro.autor }}</td>
                             <td>{{ livro.editora }}</td>

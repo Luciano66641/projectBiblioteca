@@ -34,7 +34,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'stdimage',
-        'crispy_bootstrap5',
+    'crispy_bootstrap5',
     'crispy_forms',
     'login.apps.LoginConfig',
     'contato.apps.ContatoConfig',

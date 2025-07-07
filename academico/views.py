@@ -35,7 +35,7 @@ ORDENACAO_LIVROS_LOOKUP = {
     'quantidade': 'quantidade_disponivel',
 }
 
-
+@login_required
 def index(request):
     return render(request, 'academico/index.html')
 
@@ -186,7 +186,7 @@ def editar_livro(request, id):
         return redirect('livros')
 
     if request.method == 'POST':
-        form = LivroForm(request.POST, instance=livro)
+        form = LivroForm(request.POST, request.FILES,instance=livro)
         if form.is_valid():
             form.save()
             return redirect('livros')

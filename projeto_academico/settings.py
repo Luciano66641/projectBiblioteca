@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'crispy_forms',
     'login.apps.LoginConfig',
-    'contato.apps.ContatoConfig',
     'academico.apps.AcademicoConfig',
     'django.contrib.admin',
     'django.contrib.auth',

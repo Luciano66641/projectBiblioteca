@@ -4,12 +4,14 @@ from django.core.validators import RegexValidator
 from .models import Livro, Funcionario, Cliente, Emprestimo, Reserva
 
 # Validador: apenas números
-somente_numeros = RegexValidator(r'^\d+$', 'Este campo deve conter apenas números.')
+somente_numeros = RegexValidator(
+    r'^\d+$', 'Este campo deve conter apenas números.')
 
 TIPO_RELATORIO = [
     ('livros', 'Livros mais emprestados'),
     ('usuarios', 'Usuários com mais empréstimos'),
 ]
+
 
 class LivroForm(forms.ModelForm):
     class Meta:
@@ -25,17 +27,20 @@ class LivroForm(forms.ModelForm):
             'quantidade_disponivel': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
+
 class FuncionarioForm(forms.ModelForm):
     cpf = forms.CharField(validators=[somente_numeros])
     telefone = forms.CharField(validators=[somente_numeros])
     data_nascimento = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        widget=forms.DateInput(
+            attrs={'type': 'date', 'class': 'form-control'}),
         input_formats=['%Y-%m-%d']
     )
 
     class Meta:
         model = Funcionario
-        fields = ['nome', 'data_nascimento', 'cpf', 'telefone', 'genero', 'estado_civil', 'escolaridade']
+        fields = ['nome', 'data_nascimento', 'cpf', 'telefone',
+                  'genero', 'estado_civil', 'escolaridade']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
             'cpf': forms.TextInput(attrs={'class': 'form-control'}),
@@ -44,6 +49,7 @@ class FuncionarioForm(forms.ModelForm):
             'estado_civil': forms.Select(attrs={'class': 'form-control'}),
             'escolaridade': forms.Select(attrs={'class': 'form-control'}),
         }
+
 
 class ClienteForm(forms.ModelForm):
     cpf = forms.CharField(validators=[somente_numeros])
@@ -60,17 +66,25 @@ class ClienteForm(forms.ModelForm):
             'livro': forms.Select(attrs={'class': 'form-control'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filtra apenas livros com quantidade disponível maior que 0
+        self.fields['livro'].queryset = Livro.objects.filter(
+            quantidade_disponivel__gt=0)
+
 class EmprestimoForm(forms.ModelForm):
     class Meta:
         model = Emprestimo
-        fields = ['cliente', 'livro', 'data_retirada', 'data_devolucao_prevista']
+        fields = ['cliente', 'livro', 'data_retirada',
+                  'data_devolucao_prevista']
         widgets = {
             'cliente': forms.Select(attrs={'class': 'form-control'}),
             'livro': forms.Select(attrs={'class': 'form-control'}),
             'data_retirada': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'data_devolucao_prevista': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
-        
+
+
 class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
@@ -82,11 +96,14 @@ class ReservaForm(forms.ModelForm):
 
 
 class FiltroRelatorioForm(forms.Form):
-    data_inicio = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
-    data_fim = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
-    tipo = forms.ChoiceField(choices=TIPO_RELATORIO, widget=forms.Select(attrs={'class': 'form-control'}))
-    
-    
+    data_inicio = forms.DateField(widget=forms.DateInput(
+        attrs={'type': 'date', 'class': 'form-control'}))
+    data_fim = forms.DateField(widget=forms.DateInput(
+        attrs={'type': 'date', 'class': 'form-control'}))
+    tipo = forms.ChoiceField(choices=TIPO_RELATORIO, widget=forms.Select(
+        attrs={'class': 'form-control'}))
+
+
 class RenovacaoForm(forms.ModelForm):
     class Meta:
         model = Emprestimo
@@ -95,6 +112,7 @@ class RenovacaoForm(forms.ModelForm):
             'data_devolucao_prevista': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
 
+
 class OcorrenciaForm(forms.ModelForm):
     class Meta:
         model = Emprestimo
@@ -102,5 +120,3 @@ class OcorrenciaForm(forms.ModelForm):
         widgets = {
             'status_ocorrencia': forms.Select(attrs={'class': 'form-control'})
         }
-
-

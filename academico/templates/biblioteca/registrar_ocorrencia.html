@@ -1,0 +1,27 @@
+{% extends 'biblioteca/base.html' %}
+{% load form_filters %}
+{% block content %}
+
+<div class="container py-5">
+    <h2 class="text-center mb-4">Registrar Ocorrência</h2>
+
+    <p><strong>Cliente:</strong> {{ emprestimo.cliente.nome }}</p>
+    <p><strong>Livro:</strong> {{ emprestimo.livro.titulo }}</p>
+    <p><strong>Status atual:</strong> {{ emprestimo.get_status_ocorrencia_display }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.status_ocorrencia.label_tag }}
+        {{ form.status_ocorrencia|add_class:"form-control" }}
+
+        <div class="d-grid mt-3">
+            <button type="submit" class="btn btn-danger">Confirmar Ocorrência</button>
+        </div>
+    </form>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'lista_emprestimos' %}" class="btn btn-link">Voltar</a>
+    </div>
+</div>
+
+{% endblock %}

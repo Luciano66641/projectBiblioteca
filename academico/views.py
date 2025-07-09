@@ -37,7 +37,7 @@ ORDENACAO_LIVROS_LOOKUP = {
 
 @login_required
 def index(request):
-    return render(request, 'academico/index.html')
+    return render(request, 'biblioteca/index.html')
 
 @login_required
 def funcionario(request):
@@ -52,7 +52,7 @@ def funcionario(request):
         'ativos': True,
         'query': query,
     }
-    return render(request, 'academico/lista_funcionarios.html', dados)
+    return render(request, 'biblioteca/lista_funcionarios.html', dados)
 
 @login_required
 def funcionarios_inativos(request):
@@ -68,7 +68,7 @@ def funcionarios_inativos(request):
         'ativos': False,
         'query': query
     }
-    return render(request, 'academico/lista_funcionarios.html', dados)
+    return render(request, 'biblioteca/lista_funcionarios.html', dados)
 
 
 # def livros(request):
@@ -76,7 +76,7 @@ def funcionarios_inativos(request):
 #     dados = {
 #         'livros': livros,
 #     }
-#     return render(request, 'academico/lista_livros.html', dados)
+#     return render(request, 'biblioteca/lista_livros.html', dados)
 
 @login_required
 def livros(request):
@@ -97,7 +97,7 @@ def livros(request):
         'livros': livros,
         'query': query,
     }
-    return render(request, 'academico/lista_livros.html', dados)
+    return render(request, 'biblioteca/lista_livros.html', dados)
 
 @login_required
 def ordenar_livros(request, campo):
@@ -117,7 +117,7 @@ def ordenar_livros(request, campo):
     if campo_ordenacao:
         livros = livros.order_by(campo_ordenacao)
 
-    return render(request, 'academico/lista_livros.html', {
+    return render(request, 'biblioteca/lista_livros.html', {
         'livros': livros,
         'query': busca
     })
@@ -135,7 +135,7 @@ def cadastrar_funcionario(request):
         dados = {
             'form': form,
         }
-    return render(request, 'academico/cadastrar_funcionario.html', dados)
+    return render(request, 'biblioteca/cadastrar_funcionario.html', dados)
 
 @login_required
 def cadastrar_livro(request):
@@ -150,7 +150,7 @@ def cadastrar_livro(request):
     dados = {  # sempre define 'dados', fora do if/else
         'form': form,
     }
-    return render(request, 'academico/cadastrar_livro.html', dados)
+    return render(request, 'biblioteca/cadastrar_livro.html', dados)
 
 @login_required
 def editar_funcionario(request, id):
@@ -175,7 +175,7 @@ def editar_funcionario(request, id):
         'funcionario': funcionario,
     }
 
-    return render(request, 'academico/editar_funcionario.html', dados)
+    return render(request, 'biblioteca/editar_funcionario.html', dados)
 
 @login_required
 def editar_livro(request, id):
@@ -198,7 +198,7 @@ def editar_livro(request, id):
         'livros': livro,
     }
 
-    return render(request, 'academico/editar_livro.html', dados)
+    return render(request, 'biblioteca/editar_livro.html', dados)
 
 @login_required
 def excluir_livro(request, id):
@@ -259,7 +259,7 @@ def ordenar_funcionarios(request, campo):
         'ativos': True,
         'query': busca,
     }
-    return render(request, 'academico/lista_funcionarios.html', dados)
+    return render(request, 'biblioteca/lista_funcionarios.html', dados)
 
 @login_required
 def ordenar_funcionarios_inativos(request, campo):
@@ -276,7 +276,7 @@ def ordenar_funcionarios_inativos(request, campo):
         'ativos': False,
         'query': busca,
     }
-    return render(request, 'academico/lista_funcionarios.html', dados)
+    return render(request, 'biblioteca/lista_funcionarios.html', dados)
 
 
 # clientes
@@ -289,7 +289,7 @@ def clientes(request):
     else:
         clientes = Cliente.objects.filter(ativo=True)
 
-    return render(request, 'academico/lista_clientes.html', {
+    return render(request, 'biblioteca/lista_clientes.html', {
         'clientes': clientes,
         'ativos': True,
         'query': query
@@ -303,7 +303,7 @@ def clientes_inativos(request):
     else:
         clientes = Cliente.objects.filter(ativo=False)
 
-    return render(request, 'academico/lista_clientes.html', {
+    return render(request, 'biblioteca/lista_clientes.html', {
         'clientes': clientes,
         'ativos': False,
         'query': query
@@ -318,7 +318,7 @@ def cadastrar_cliente(request):
             return redirect('clientes')
     else:
         form = ClienteForm()
-    return render(request, 'academico/cadastrar_cliente.html', {'form': form})
+    return render(request, 'biblioteca/cadastrar_cliente.html', {'form': form})
 
 @login_required
 def editar_cliente(request, id):
@@ -334,7 +334,7 @@ def editar_cliente(request, id):
             return redirect('clientes')
 
     form = ClienteForm(instance=cliente)
-    return render(request, 'academico/editar_cliente.html', {'form': form, 'cliente': cliente})
+    return render(request, 'biblioteca/editar_cliente.html', {'form': form, 'cliente': cliente})
 
 @login_required
 def excluir_cliente(request, id):
@@ -369,7 +369,7 @@ def ordenar_clientes(request, campo):
 
     clientes = clientes.order_by(campo_ordenacao)
 
-    return render(request, 'academico/lista_clientes.html', {
+    return render(request, 'biblioteca/lista_clientes.html', {
         'clientes': clientes,
         'ativos': True,
         'query': busca
@@ -386,7 +386,7 @@ def ordenar_clientes_inativos(request, campo):
 
     clientes = clientes.order_by(campo_ordenacao)
 
-    return render(request, 'academico/lista_clientes.html', {
+    return render(request, 'biblioteca/lista_clientes.html', {
         'clientes': clientes,
         'ativos': False,
         'query': busca
@@ -395,13 +395,13 @@ def ordenar_clientes_inativos(request, campo):
 @login_required
 def visualizar_funcionario(request, id):
     funcionario = get_object_or_404(Funcionario, id=id)
-    return render(request, 'academico/visualizar_funcionario.html', {
+    return render(request, 'biblioteca/visualizar_funcionario.html', {
         'funcionario': funcionario
     })
 
 def visualizar_cliente(request, id):
     cliente = get_object_or_404(Cliente, id=id)
-    return render(request, 'academico/visualizar_cliente.html', {
+    return render(request, 'biblioteca/visualizar_cliente.html', {
         'cliente': cliente
     })
 
@@ -424,7 +424,7 @@ def realizar_emprestimo(request):
                 form.add_error('livro', 'Livro indisponível no momento.')
     else:
         form = EmprestimoForm()
-    return render(request, 'academico/realizar_emprestimo.html', {'form': form})
+    return render(request, 'biblioteca/realizar_emprestimo.html', {'form': form})
 
 @login_required
 def registrar_devolucao(request, emprestimo_id):
@@ -449,7 +449,7 @@ def registrar_devolucao(request, emprestimo_id):
 @login_required
 def lista_emprestimos(request):
     emprestimos = Emprestimo.objects.filter(devolvido=False)
-    return render(request, 'academico/lista_emprestimos.html', {'emprestimos': emprestimos})
+    return render(request, 'biblioteca/lista_emprestimos.html', {'emprestimos': emprestimos})
 
 @login_required
 def reservar_livro(request):
@@ -470,7 +470,7 @@ def reservar_livro(request):
     else:
         form = ReservaForm()
         form.fields['livro'].queryset = Livro.objects.filter(quantidade_disponivel=0)
-    return render(request, 'academico/reservar_livro.html', {'form': form})
+    return render(request, 'biblioteca/reservar_livro.html', {'form': form})
 
 @login_required
 def gerar_relatorio(request):
@@ -499,7 +499,7 @@ def gerar_relatorio(request):
                     .order_by('-total')
                 )
 
-    return render(request, 'academico/relatorio.html', {
+    return render(request, 'biblioteca/relatorio.html', {
         'form': form,
         'relatorio': relatorio
     })
@@ -523,7 +523,7 @@ def renovar_emprestimo(request, emprestimo_id):
     else:
         form = RenovacaoForm(instance=emprestimo)
 
-    return render(request, 'academico/renovar_emprestimo.html', {'form': form, 'emprestimo': emprestimo})
+    return render(request, 'biblioteca/renovar_emprestimo.html', {'form': form, 'emprestimo': emprestimo})
 
 @login_required
 def registrar_ocorrencia(request, emprestimo_id):
@@ -547,7 +547,7 @@ def registrar_ocorrencia(request, emprestimo_id):
     else:
         form = OcorrenciaForm(instance=emprestimo)
 
-    return render(request, 'academico/registrar_ocorrencia.html', {'form': form, 'emprestimo': emprestimo})
+    return render(request, 'biblioteca/registrar_ocorrencia.html', {'form': form, 'emprestimo': emprestimo})
 
 @login_required
 def desbloquear_cliente(request, id):
@@ -560,7 +560,7 @@ def desbloquear_cliente(request, id):
 @login_required
 def listar_reservas(request):
     reservas = Reserva.objects.all().order_by('-data_reserva')
-    return render(request, 'academico/lista_reservas.html', {'reservas': reservas})
+    return render(request, 'biblioteca/lista_reservas.html', {'reservas': reservas})
     
 @login_required
 def cancelar_reserva(request, reserva_id):

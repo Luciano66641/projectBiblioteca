@@ -1,0 +1,57 @@
+{% extends 'biblioteca/base.html' %}
+{% load form_filters %}
+{% block content %}
+
+<div class="container py-5">
+    <h2 class="text-center mb-4">Relatório de Empréstimos</h2>
+
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                {{ form.data_inicio.label_tag }} {{ form.data_inicio }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.data_fim.label_tag }} {{ form.data_fim }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ form.tipo.label_tag }} {{ form.tipo }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Gerar Relatório</button>
+    </form>
+
+    {% if relatorio %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                {% if form.cleaned_data.tipo == 'livros' %}
+                <th>Livro</th>
+                {% else %}
+                <th>Usuário</th>
+                {% endif %}
+                <th>Total de Empréstimos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in relatorio %}
+            <tr>
+                {% if form.cleaned_data.tipo == 'livros' %}
+                <td>{{ item.livro__titulo }}</td>
+                {% else %}
+                <td>{{ item.cliente__nome }}</td>
+                {% endif %}
+
+                <td>{{ item.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{% url 'index' %}" class="btn btn-link">Voltar para o Menu</a>
+    </div>
+</div>
+
+{% endblock %}
